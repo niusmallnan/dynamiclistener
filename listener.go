@@ -163,13 +163,16 @@ type listener struct {
 func (l *listener) WrapExpiration(days int) net.Listener {
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() {
+		logrus.Infof("WrapExpiration: #### before runtime.Gosched()")
 		// busy-wait for certificate preload to complete
 		for l.cert == nil {
 			runtime.Gosched()
 		}
+		logrus.Infof("WrapExpiration: #### after runtime.Gosched()")
 
 		for {
 			wait := 6 * time.Hour
+			logrus.Infof("WrapExpiration: #### before checkExpiratio days: %d", days)
 			if err := l.checkExpiration(days); err != nil {
 				logrus.Errorf("dynamiclistener %s: failed to check and renew dynamic cert: %v", l.Addr(), err)
 				// Don't go into short retry loop if we're using a static (user-provided) cert.

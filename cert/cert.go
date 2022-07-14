@@ -293,6 +293,7 @@ func ipsToStrings(ips []net.IP) []string {
 // IsCertExpired checks if the certificate about to expire
 func IsCertExpired(cert *x509.Certificate, days int) bool {
 	expirationDate := cert.NotAfter
+	logrus.Infof("IsCertExpired certificate %s expired at %s", cert.Subject, cert.NotAfter)
 	diffDays := time.Until(expirationDate).Hours() / 24.0
 	if diffDays <= float64(days) {
 		logrus.Infof("certificate %s will expire in %f days at %s", cert.Subject, diffDays, cert.NotAfter)
