@@ -182,6 +182,7 @@ func (l *listener) WrapExpiration(days int) net.Listener {
 					wait = 5 * time.Minute
 				}
 			}
+			logrus.Infof("WrapExpiration: #### after checkExpiratio days: %d", days)
 			select {
 			case <-ctx.Done():
 				return
