@@ -117,6 +117,7 @@ func (t *TLS) Renew(secret *v1.Secret) (*v1.Secret, error) {
 	cns := cns(secret)
 	secret = secret.DeepCopy()
 	secret.Annotations = map[string]string{}
+	logrus.Infof("fingerprint before renewing %s", secret.Annotations[fingerprint])
 	secret, _, err := t.generateCert(secret, cns...)
 	return secret, err
 }
@@ -187,6 +188,7 @@ func (t *TLS) generateCert(secret *v1.Secret, cn ...string) (*v1.Secret, bool, e
 	secret.Data[v1.TLSCertKey] = certBytes
 	secret.Data[v1.TLSPrivateKeyKey] = keyBytes
 	secret.Annotations[fingerprint] = fmt.Sprintf("SHA1=%X", sha1.Sum(newCert.Raw))
+	logrus.Infof("generateCert fingerprint %s", secret.Annotations[fingerprint])
 
 	return secret, true, nil
 }
