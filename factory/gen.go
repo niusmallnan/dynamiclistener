@@ -94,12 +94,16 @@ func (t *TLS) Merge(target, additional *v1.Secret) (*v1.Secret, bool, error) {
 	// if the additional secret already has all the CNs, use it in preference to the
 	// current one. This behavior is required to allow for renewal or regeneration.
 	if !NeedsUpdate(0, additional, mergedCNs...) {
+		logrus.Infof("#1 NeedsUpdate additional: %v", additional.Annotations)
+		logrus.Infof("#1 NeedsUpdate mergedCNs: %v", mergedCNs)
 		return additional, true, nil
 	}
 
 	// if the target secret already has all the CNs, continue using it. The additional
 	// cert had only a subset of the current CNs, so nothing needs to be added.
 	if !NeedsUpdate(0, target, mergedCNs...) {
+		logrus.Infof("#2 NeedsUpdate target: %v", target.Annotations)
+		logrus.Infof("#2 NeedsUpdate mergedCNs: %v", mergedCNs)
 		return target, false, nil
 	}
 
@@ -117,7 +121,6 @@ func (t *TLS) Renew(secret *v1.Secret) (*v1.Secret, error) {
 	cns := cns(secret)
 	secret = secret.DeepCopy()
 	secret.Annotations = map[string]string{}
-	logrus.Infof("fingerprint before renewing %s", secret.Annotations[fingerprint])
 	secret, _, err := t.generateCert(secret, cns...)
 	return secret, err
 }
