@@ -151,6 +151,7 @@ func (s *storage) targetSecret() (*v1.Secret, error) {
 func (s *storage) saveInK8s(secret *v1.Secret) (*v1.Secret, error) {
 	if !s.initComplete() {
 		logrus.Info("saveInK8s initComplete false")
+		secret.ResourceVersion = ""
 		return secret, nil
 	}
 
