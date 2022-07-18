@@ -152,6 +152,8 @@ func (s *storage) saveInK8s(secret *v1.Secret) (*v1.Secret, error) {
 		return secret, nil
 	}
 
+	logrus.Infof("saveInK8s secret anno before merge: %v", secret.Annotations)
+
 	targetSecret, err := s.targetSecret()
 	if err != nil {
 		return nil, err
@@ -186,6 +188,8 @@ func (s *storage) saveInK8s(secret *v1.Secret) (*v1.Secret, error) {
 		logrus.Warnf("Skipping save of TLS secret for %s/%s due to missing certificate data", secret.Namespace, secret.Name)
 		return targetSecret, nil
 	}
+
+	logrus.Infof("saveInK8s secret anno after merge: %v", secret.Annotations)
 
 	targetSecret.Annotations = secret.Annotations
 	targetSecret.Type = v1.SecretTypeTLS
