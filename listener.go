@@ -253,6 +253,7 @@ func (l *listener) checkExpiration(days int) error {
 		if err != nil {
 			return err
 		}
+		logrus.Infof("checkExpiration secret anno after Renew %v", secret.Annotations)
 		if err := l.storage.Update(secret); err != nil {
 			return err
 		}
