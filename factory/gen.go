@@ -122,6 +122,7 @@ func (t *TLS) Renew(secret *v1.Secret) (*v1.Secret, error) {
 	secret = secret.DeepCopy()
 	secret.Annotations = map[string]string{}
 	secret, _, err := t.generateCert(secret, cns...)
+	logrus.Infof("Renew secret %v", secret.Annotations)
 	return secret, err
 }
 
