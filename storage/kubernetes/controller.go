@@ -162,6 +162,7 @@ func (s *storage) saveInK8s(secret *v1.Secret) (*v1.Secret, error) {
 	if s.tls != nil {
 		// merge new secret with secret from backing storage, if one exists
 		if existing, err := s.Get(); err == nil && cert.IsValidTLSSecret(existing) {
+			logrus.Infof("saveInK8s merge #1")
 			if newSecret, updated, err := s.tls.Merge(existing, secret); err == nil && updated {
 				secret = newSecret
 			}
@@ -169,6 +170,7 @@ func (s *storage) saveInK8s(secret *v1.Secret) (*v1.Secret, error) {
 
 		// merge new secret with existing secret from Kubernetes, if one exists
 		if cert.IsValidTLSSecret(targetSecret) {
+			logrus.Infof("saveInK8s merge #2")
 			if newSecret, updated, err := s.tls.Merge(targetSecret, secret); err != nil {
 				return nil, err
 			} else if !updated {
@@ -211,6 +213,7 @@ func (s *storage) Update(secret *v1.Secret) error {
 }
 
 func isConflictOrAlreadyExists(err error) bool {
+	logrus.Warnf("update secret retry error: %v", err)
 	return errors.IsConflict(err) || errors.IsAlreadyExists(err)
 }
 
