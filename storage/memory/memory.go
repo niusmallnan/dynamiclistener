@@ -32,6 +32,7 @@ func (m *memory) Get() (*v1.Secret, error) {
 }
 
 func (m *memory) Update(secret *v1.Secret) error {
+	logrus.Infof("Mem Update secret anno after Renew %v", secret.Annotations)
 	if m.secret == nil || m.secret.ResourceVersion == "" || m.secret.ResourceVersion != secret.ResourceVersion {
 		if m.storage != nil {
 			if err := m.storage.Update(secret); err != nil {

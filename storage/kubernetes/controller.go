@@ -208,6 +208,7 @@ func (s *storage) Update(secret *v1.Secret) error {
 	// accepting new connections if the apiserver becomes unavailable after the Secrets controller
 	// has been initialized. We're not passing around any contexts here, nor does the controller
 	// accept any, so there's no good way to soft-fail with a reasonable timeout.
+	logrus.Infof("K8s Update secret anno after Renew %v", secret.Annotations)
 	go func() {
 		if err := s.update(secret); err != nil {
 			logrus.Errorf("Failed to save TLS secret for %s/%s: %v", secret.Namespace, secret.Name, err)
@@ -217,12 +218,13 @@ func (s *storage) Update(secret *v1.Secret) error {
 }
 
 func isConflictOrAlreadyExists(err error) bool {
-	logrus.Warnf("update secret retry error: %v", err)
+	logrus.Infof("update secret retry error: %v", err)
 	return errors.IsConflict(err) || errors.IsAlreadyExists(err)
 }
 
 func (s *storage) update(secret *v1.Secret) (err error) {
 	var newSecret *v1.Secret
+	logrus.Infof("K8s update secret anno after Renew %v", secret.Annotations)
 	err = retry.OnError(retry.DefaultRetry, isConflictOrAlreadyExists, func() error {
 		newSecret, err = s.saveInK8s(secret)
 		return err

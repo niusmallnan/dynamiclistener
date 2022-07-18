@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/rancher/dynamiclistener"
+	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -32,6 +33,7 @@ func (s *storage) Get() (*v1.Secret, error) {
 }
 
 func (s *storage) Update(secret *v1.Secret) error {
+	logrus.Infof("File Update secret anno after Renew %v", secret.Annotations)
 	f, err := os.Create(s.file)
 	if err != nil {
 		return err
