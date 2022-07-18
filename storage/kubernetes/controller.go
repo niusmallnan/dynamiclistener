@@ -83,6 +83,7 @@ func (s *storage) init(secrets v1controller.SecretController) {
 			return nil, nil
 		}
 		if secret.Namespace == s.namespace && secret.Name == s.name {
+			logrus.Infof("tls-storage secret anno %v", secret.Annotations)
 			if err := s.Update(secret); err != nil {
 				return nil, err
 			}
@@ -149,6 +150,7 @@ func (s *storage) targetSecret() (*v1.Secret, error) {
 
 func (s *storage) saveInK8s(secret *v1.Secret) (*v1.Secret, error) {
 	if !s.initComplete() {
+		logrus.Info("saveInK8s initComplete false")
 		return secret, nil
 	}
 
